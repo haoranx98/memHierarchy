@@ -1,4 +1,11 @@
 import sst
+
+import os
+current_dir = os.path.abspath(os.path.dirname(__file__))
+# print(current_dir)
+sys.path.append(current_dir)
+sys.path.append("..")
+
 from mhlib import componentlist
 
 DEBUG_L1 = 0
@@ -90,11 +97,11 @@ memory = memctrl.setSubComponent("backend", "memHierarchy.simpleDRAM")
 memory.addParams({
     "max_requests_per_cycle" : 1,
     "mem_size" : "512MiB",
-    "tCAS" : 3,
-    "tRCD" : 3,
-    "tRP" : 3,
-    "cycle_time" : "5ns",
-    "row_size" : "8KiB",
+    "tCAS" : 10,
+    "tRCD" : 10,
+    "tRP" : 10,
+    "cycle_time" : "10ns",
+    "row_size" : "16KiB",
     "row_policy" : "open"
 })
 

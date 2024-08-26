@@ -59,8 +59,10 @@ public:
             {"interleave_step",     "(string) Distance between interleaved chunks. E.g., to interleave 8B chunks among 3 memories, set size=8B, step=24B", "0B"},\
             {"customCmdMemHandler", "(string) Name of the custom command handler to load", ""},\
             {"controller_id",      "(uint) Unique ID for this controller", "0"},\
-            {"controller_number_per_node", "(uint) Number of controllers per node", "1"}
-            // {"isConfigured", "(bool) Enable reConfigure", "false"},\
+            {"controller_number_per_node", "(uint) Number of controllers per node", "1"},\
+            {"block_num_per_controller", "(uint) Number of blocks per controller", "1"},\
+            {"isConfigured", "(bool) Enable reConfigure", "False"},\
+            {"output_folder_path", "(string) Path to the output folder for the controller", "/home/haoranx98"}
 
     SST_ELI_DOCUMENT_PARAMS( MEMCONTROLLER_ELI_PARAMS )
 
@@ -171,15 +173,20 @@ protected:
     /* For new parameter*/
     int32_t controller_id = 0;
     int32_t controller_number_per_node = 1;
+    int32_t block_num_per_controller = 2;
     map<string, int32_t> core_map;
-    bool isReconfigured = false;
+    
     int32_t core[128] = {0};
     int32_t         m_core_num;
     std::vector<vector<int>> *core_mem_access = nullptr;
     std::vector<string> core_name;
     static int32_t count;
+    bool m_isReconfigured;
+    static int blnum[2][256];
+    static bool is_mapped;
+    
 
-    static int blnum[2][4];
+    string folder_path;
 
     // void inc_count(){
     //     this->count++;
@@ -190,11 +197,11 @@ protected:
     // }
 
     void set_is_reconfigured(bool is_reconfigured){
-        this->isReconfigured = is_reconfigured;
+        this->m_isReconfigured = is_reconfigured;
     };
 
     bool get_is_reconfigured(){
-        return this->isReconfigured;
+        return this->m_isReconfigured;
     };
 
     void set_core_num(int32_t core_num){
@@ -218,6 +225,8 @@ private:
 
     void handleCustomEvent(MemEventBase* ev);
 };
+
+// std::vector<int> MemController::bl_num_vector;
 
 }}
 

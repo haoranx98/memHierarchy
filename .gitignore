@@ -6,3 +6,4 @@
 .vscode/
 tests/__pycache__/
 *.log
+logs/

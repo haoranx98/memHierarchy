@@ -56,15 +56,17 @@ using namespace SST::MemHierarchy;
 /*************************** Memory Controller ********************/
 
 int32_t MemController::count = 0;
-int MemController::blnum[2][4] = {0};
+bool is_mapped = false;
+int MemController::blnum[2][256] = {0};
+
 MemController::MemController(ComponentId_t id, Params &params) : Component(id), backing_(NULL)
 {
 
     // m_core_num = params.find<>("core_num", 1); //获取core_num
-    // m_isReconfigured = params.find<>("is_reconfigured", false);
+    m_isReconfigured = params.find<bool>("isConfigured", false);
     // //测试读取是否正确
     // std::cout << "core_num: " << m_core_num << std::endl;
-    // std::cout << "is_Reconfigured: " << m_isReconfigured << std::endl;
+    std::cout << "is_Reconfigured: " << this->m_isReconfigured << std::endl;
     // //测试输出地址空间大小
     // std::cout << "memory size:" << std::hex << m_memSize << std::endl;
     dlevel = params.find<int>("debug_level", 0);
@@ -114,12 +116,16 @@ MemController::MemController(ComponentId_t id, Params &params) : Component(id), 
         out.output("%s, ** Found deprecated parameter: direct_link ** The value of this parameter is now auto-detected by the link configuration in your input deck. Remove this parameter from your input deck to eliminate this message.\n", getName().c_str());
     }
 
-    //新增参数
+    // 新增参数
     this->controller_id = params.find<int>("controller_id", 0);
     this->controller_number_per_node = params.find<int>("controller_number_per_node", 1);
+    this->block_num_per_controller = params.find<int>("block_num_per_controller", 2);
+    this->folder_path = params.find<string>("output_folder_path", "/home/haoranx98");
+
+    std::cout << "folder_path: " << this->folder_path << endl;
 
     // cout << "controller_id: " << this->controller_id << endl;
-    // cout << "controller_number_per_node: " << this->controller_number_per_node << endl;
+    std::cout << "controller_number_per_node: " << this->controller_number_per_node << endl;
 
     /* Clock Handler */
     std::string clockfreq = params.find<std::string>("clock");
@@ -312,7 +318,7 @@ MemController::MemController(ComponentId_t id, Params &params) : Component(id), 
     set<MemLinkBase::EndpointInfo> *endpoints = link_again->getSources();
     for (std::set<MemLinkBase::EndpointInfo>::const_iterator it = endpoints->begin(); it != endpoints->end(); it++)
     {
-        cout << "Set string: " << it->toString() << endl;
+        std::cout << "Set string: " << it->toString() << endl;
     }
 
     // Set up backing store if needed
@@ -437,8 +443,15 @@ void MemController::handleEvent(SST::Event *event)
         * 输出内存大小
     */
 
-    int mem_capacity = memBackendConvertor_->getMemSize();
-    int half_mem_capacity = static_cast<unsigned int>(mem_capacity) / 2;
+    // size_t mem_capacity_of_8 = memBackendConvertor_->getMemSize();
+    // cout << "mem_capacity_of_8: " << mem_capacity_of_8 << endl;
+    size_t mem_capacity = memBackendConvertor_->getMemSize();
+    // cout << "memory capacity: " << mem_capacity << endl;
+    // int half_mem_capacity = static_cast<unsigned int>(mem_capacity) / 2;
+    // int block_size = static_cast<unsigned int>(mem_capacity) / this->controller_number_per_node;
+    size_t block_size = mem_capacity / this->block_num_per_controller;
+    // cout << "controller_number_per_node: " << controller_number_per_node << endl;
+    // cout << "块内存大小：" << std::hex << block_size << endl;
     // cout << "内存大小：" << std::hex << mem_capacity << endl;
     // cout << "半内存大小：" << std::hex << half_mem_capacity << endl;
 
@@ -481,7 +494,275 @@ void MemController::handleEvent(SST::Event *event)
     }
 #endif
 
-    if (ev->getVirtualAddr() != 0)
+    if (this->m_isReconfigured == true) // 可重构
+    {
+        if (ev->getVirtualAddr() != 0)
+        {
+            if (ev->isAddrGlobal())
+            {
+                ev->setBaseAddr(translateToLocal(ev->getBaseAddr()));
+                ev->setAddr(translateToLocal(ev->getAddr()));
+                ev->setVirtualAddr(0);
+                // cout << "-----------------------------------" << endl;
+            }
+
+            notifyListeners(ev);
+
+            switch (cmd)
+            {
+            case Command::PutM:
+                ev->setFlag(MemEvent::F_NORESPONSE);
+            case Command::GetS:
+            case Command::GetX:
+            case Command::GetSX:
+            case Command::Write:
+                outstandingEvents_.insert(std::make_pair(ev->getID(), ev));
+                if (is_debug_event(ev))
+                {
+                    Debug(_L4_, "B: %-20" PRIu64 " %-20" PRIu64 " %-20s Bkend:Send    (%s)\n",
+                          getCurrentSimCycle(), getNextClockCycle(clockTimeBase_) - 1, getName().c_str(),
+                          ev->getVerboseString().c_str());
+                }
+                memBackendConvertor_->handleMemEvent(ev);
+                break;
+
+            case Command::FlushLine:
+            case Command::FlushLineInv:
+            {
+                MemEvent *put = NULL;
+                if (ev->getPayloadSize() != 0)
+                {
+                    put = new MemEvent(getName(), ev->getBaseAddr(), ev->getBaseAddr(), Command::PutM, ev->getPayload());
+                    put->setFlag(MemEvent::F_NORESPONSE);
+                    outstandingEvents_.insert(std::make_pair(put->getID(), put));
+                    if (is_debug_event(put))
+                    {
+                        Debug(_L4_, "B: %-20" PRIu64 " %-20" PRIu64 " %-20s Bkend:Send    (%s)\n",
+                              getCurrentSimCycle(), getNextClockCycle(clockTimeBase_) - 1, getName().c_str(),
+                              put->getVerboseString().c_str());
+                    }
+                    memBackendConvertor_->handleMemEvent(put);
+                }
+
+                outstandingEvents_.insert(std::make_pair(ev->getID(), ev));
+                ev->setCmd(Command::FlushLine);
+                if (is_debug_event(ev))
+                {
+                    Debug(_L4_, "B: %-20" PRIu64 " %-20" PRIu64 " %-20s Bkend:Send    (%s)\n",
+                          getCurrentSimCycle(), getNextClockCycle(clockTimeBase_) - 1, getName().c_str(),
+                          ev->getVerboseString().c_str());
+                }
+                memBackendConvertor_->handleMemEvent(ev);
+            }
+            break;
+
+            case Command::PutS:
+            case Command::PutE:
+                delete ev;
+                break;
+            default:
+                out.fatal(CALL_INFO, -1, "Memory controller received unrecognized command: %s", CommandString[(int)cmd]);
+            }
+        }
+        else
+        {
+            if (ev->isAddrGlobal())
+            {
+                // std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+                int old_addr = ev->getAddr();
+
+                // 全局地址
+                // std::cout << "global Addr is: " << old_addr << endl;
+
+                // cout << "global addr is: " << static_cast<Addr>(ev->getAddr()) << endl;
+
+                ev->setBaseAddr(translateToLocal(ev->getBaseAddr()));
+
+                ev->setAddr(translateToLocal(ev->getAddr()));
+                Addr addr = ev->getAddr();
+                // cout << "Addr is: " << std::hex << addr << endl;
+                // cout << "Addr(int) is " << (int)addr << endl;
+
+                string src = ev->getSrc();
+                string dst = ev->getDst();
+
+                // 访存请求的数量
+                // std::cout << "This is   " << this->count << endl;
+
+                // cout << "local Addr is " << ev->getAddr() << endl;
+
+                // 内存请求的发送端和接收端
+                // std::cout << "memoryController src " << src << " memoryController dst " << dst << endl;
+
+                MemController::count++;
+
+                // 内存块的数量，数量是内存控制器数的平方
+                int total_block_number = controller_number_per_node * block_num_per_controller;
+                // 存储内存块的编号，按列的顺序存储
+                vector<int> old_block(total_block_number);
+                // 初始化存储内存块编号的数组
+                for (int i = 0; i < controller_number_per_node * block_num_per_controller; i++)
+                {
+                    old_block[i] = i;
+                }
+
+                // 创建新的内存块号数组
+                vector<int> new_block(old_block);
+
+                if (controller_number_per_node != block_num_per_controller)
+                // 内存控制器的数量和每个控制器的内存块的数量不相等
+                {
+                    for (int i = 0; i < block_num_per_controller; ++i)
+                    {
+                        for (int j = 0; j < controller_number_per_node; ++j)
+                        {
+                            int value;
+                            if (i % 2 == 1)
+                            {                                        // 奇数行
+                                value = old_block[i * controller_number_per_node + (controller_number_per_node - 1 - j)]; // 倒置奇数行
+                            }
+                            else
+                            {
+                                value = old_block[i * controller_number_per_node + j]; // 保持偶数行不变
+                            }
+                            new_block[j * block_num_per_controller + i] = value; // 按列存储
+                        }
+                    }
+                }
+                else
+                // 内存控制器的数量和每个控制器的内存块的数量相等
+                {
+                    for (int j = 1; j < controller_number_per_node; j += 2)
+                    {
+                        int start = j * controller_number_per_node;
+                        int end = (j + 1) * controller_number_per_node - 1;
+                        while (start < end)
+                        {
+                            int temp = new_block[start];
+                            new_block[start] = new_block[end];
+                            new_block[end] = temp;
+                            start++;
+                            end--;
+                        }
+                    }
+                    // 将方阵进行转置
+                    for (int i = 0; i < controller_number_per_node; ++i)
+                    {
+                        for (int j = i + 1; j < controller_number_per_node; ++j)
+                        {
+                            int temp = new_block[j * controller_number_per_node + i];
+                            new_block[j * controller_number_per_node + i] = new_block[i * controller_number_per_node + j];
+                            new_block[i * controller_number_per_node + j] = temp;
+                        }
+                    }
+                    // 倒置偶数列
+                }
+
+                // 输出新旧块号列表
+                //  for(int i = 0; i < controller_number_per_node * block_num_per_controller; i++){
+                //      std::cout << old_block[i] << "\t";
+                //  }
+                //  cout << endl;
+
+                // for(int i = 0; i < controller_number_per_node * block_num_per_controller; i++){
+                //     std::cout << new_block[i] << "\t";
+                // }
+                // cout << endl;
+
+                // 构建新旧块号的映射
+                map<int, int> block_number_map;
+                for (int i = 0; i < total_block_number; i++)
+                {
+                    block_number_map[new_block[i]] = old_block[i];
+                }
+
+                // 计算当前地址的块号
+                // cout << "controller_id is: " << controller_id << endl;
+                int block_num = block_num_per_controller * controller_id;
+
+                block_num += addr / block_size;
+                // 输出旧块号
+                // std::cout << "old block_num: " << block_num << endl;
+
+                blnum[0][block_num]++;
+
+                // 计算新的块号
+                int real_block_num = block_number_map[block_num];
+                // 输出新块号
+                //  std::cout << "real block_num: " << real_block_num << endl;
+                blnum[1][real_block_num]++;
+
+                // const char* env_var = std::getenv("HOME");
+                std::string filename = folder_path + "/reconfigure.txt";
+                std::ofstream file;
+
+                // file.open(filename, std::ios::out | std::ios::app);
+                file.open(filename, std::ios::out | std::ios::trunc);
+
+                for (int i = 0; i < 2; i++)
+                {
+
+                    if (i == 0)
+                    {
+                        // std::cout << "old: ";
+                        file << "old: ";
+                    }
+                    else
+                    {
+                        // std::cout << "new: ";
+                        file << "new: ";
+                    }
+                    for (int j = 0; j < total_block_number; j++)
+                    {
+                        // std::cout << blnum[i][j] << " ";
+                        file << blnum[i][j] << "\t";
+                    }
+                    // std::cout << endl;
+                    file << endl;
+                }
+
+                file.close();
+
+                //     cout << "local Addr: " << ev->getAddr() << endl;
+
+                // 通过新块号计算新地址
+                Addr new_addr = addr;
+                if (block_num != real_block_num)
+                {
+                    new_addr = real_block_num * block_size + addr % block_size;
+                }
+                else
+                {
+                    new_addr = real_block_num * block_size + addr % block_size;
+                }
+                // cout << "new Addr: " << new_addr << endl;
+                // cout << "block num: " << block_num << " real_block_num: " << real_block_num << endl;
+
+                // 块内地址、转换后的新地址
+                // std::cout << "addr in block: " << ev->getAddr() % half_mem_capacity << endl;
+                // std::cout << "new addr:" << new_addr << endl;
+                // std::cout << "new addr unsigned: " << static_cast<unsigned int>(new_addr) << endl;
+                // cout << "isGlobal: " << ev->isAddrGlobal() << endl;
+
+                string old_dst = ev->getDst();
+                string new_dst = old_dst;
+                // std::cout << "old dst: " << old_dst << endl;
+                new_dst[6] = '0' + real_block_num / block_num_per_controller;
+                // std::cout << "new dst: " << new_dst << endl;
+
+                // cout << "vaddr: " << ev->getVirtualAddr() << endl;
+                ev->setDst(new_dst);
+                // cout << "send to: " << new_dst << endl;
+                ev->setAddr(new_addr);
+                ev->setBaseAddr(new_addr);
+                ev->setVirtualAddr(new_addr);
+
+                link_->send(ev);
+                // cout << "send!" << endl;
+            }
+        }
+    }
+    else // 不进行可重构
     {
         if (ev->isAddrGlobal())
         {
@@ -489,6 +770,32 @@ void MemController::handleEvent(SST::Event *event)
             ev->setAddr(translateToLocal(ev->getAddr()));
             ev->setVirtualAddr(0);
         }
+
+        Addr addr = ev->getAddr();
+        // cout << "addr is: " << addr << endl;
+
+        int block_num = block_num_per_controller * controller_id;
+
+        block_num += addr / block_size;
+
+        blnum[0][block_num]++;
+
+        // const char* env_var = std::getenv("HOME");
+        std::string filename = folder_path + "/not_reconfigure.txt";
+        std::ofstream file;
+
+        // file.open(filename, std::ios::out | std::ios::app);
+        file.open(filename, std::ios::out | std::ios::trunc);
+
+        for (int i = 0; i < 4; i++)
+        {
+            // cout << blnum[0][i] << " ";
+            file << blnum[0][i] << " ";
+        }
+
+        // cout << endl;
+        file << endl;
+        file.close();
 
         notifyListeners(ev);
 
@@ -546,123 +853,6 @@ void MemController::handleEvent(SST::Event *event)
             break;
         default:
             out.fatal(CALL_INFO, -1, "Memory controller received unrecognized command: %s", CommandString[(int)cmd]);
-        }
-    }
-    else
-    {
-        if (ev->isAddrGlobal())
-        {
-            cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
-            int old_addr = ev->getAddr();
-            cout << "global Addr is: " << old_addr << endl;
-            // cout << "global addr is: " << static_cast<Addr>(ev->getAddr()) << endl;
-
-            ev->setBaseAddr(translateToLocal(ev->getBaseAddr()));
-
-            ev->setAddr(translateToLocal(ev->getAddr()));
-            int addr = ev->getAddr();
-            // cout << "Addr is: " << addr << endl;
-
-            string src = ev->getSrc();
-            string dst = ev->getDst();
-
-            cout << "This is   " << this->count << endl;
-            // cout << "local Addr is " << ev->getAddr() << endl;
-            cout << "memoryController src " << src << " memoryController dst " << dst << endl;
-            MemController::count++;
-
-            vector<int> addr_map(controller_number_per_node * 2);
-
-            for (int i = 0; i < controller_number_per_node * 2; i++)
-            {
-                addr_map[i] = i;
-            }
-
-            int i = 0;
-            int j = controller_number_per_node * 2 - 1;
-            vector<int> temp_addr_map(controller_number_per_node * 2);
-
-            // // 创建前一半向量
-            std::vector<int> firstHalf(addr_map.begin(), addr_map.begin() + addr_map.size() / 2);
-
-            // // 创建后一半向量
-            std::vector<int> secondHalf(addr_map.begin() + addr_map.size() / 2, addr_map.end());
-
-            // //反转后一半向量
-            std::reverse(secondHalf.begin(), secondHalf.end());
-
-            // cout << endl;
-
-            for (int i = 0; i < firstHalf.size(); i++)
-            {
-                temp_addr_map[2 * i] = firstHalf[i];
-                temp_addr_map[2 * i + 1] = secondHalf[i];
-            }
-
-            int block_num = 2 * controller_id;
-
-            if (addr > half_mem_capacity)
-            {
-                block_num += 1;
-            }
-
-            blnum[0][block_num]++;
-
-            cout << "block_num: " << block_num << endl;
-            std::map<int, int> myMap;
-            for (int i = 0; i < temp_addr_map.size(); i++)
-            {
-                myMap[temp_addr_map[i]] = addr_map[i];
-            }
-
-            // for (auto i : myMap)
-            // {
-            //     cout << i.first << " " << i.second << endl;
-            // }
-
-            int real_block_num = myMap[block_num];
-            blnum[1][real_block_num]++;
-
-            for (int i = 0; i < 2; i++)
-            {
-
-                if (i == 0)
-                {
-                    cout << "old: ";
-                }
-                else
-                {
-                    cout << "new: ";
-                }
-                for (int j = 0; j < 4; j++)
-                {
-                    cout << blnum[i][j] << " ";
-                }
-                cout << endl;
-            }
-            cout << "real block_num: " << real_block_num << endl;
-
-            //     cout << "local Addr: " << ev->getAddr() << endl;
-
-            int new_addr = real_block_num * half_mem_capacity + ev->getAddr() % half_mem_capacity;
-            cout << "addr in block: " << ev->getAddr() % half_mem_capacity << endl;
-            cout << "new addr:" << new_addr << endl;
-            cout << "new addr unsigned: " << static_cast<unsigned int>(new_addr) << endl;
-            // cout << "isGlobal: " << ev->isAddrGlobal() << endl;
-
-            string old_dst = ev->getDst();
-            string new_dst = old_dst;
-            cout << "old dst: " << old_dst << endl;
-            new_dst[6] = '0' + real_block_num / 2;
-            cout << "new dst: " << new_dst << endl;
-
-            // cout << "vaddr: " << ev->getVirtualAddr() << endl;
-            ev->setDst(new_dst);
-            ev->setAddr(new_addr);
-            ev->setBaseAddr(new_addr);
-            ev->setVirtualAddr(new_addr);
-
-            link_->send(ev);
         }
     }
 }
@@ -909,7 +1099,7 @@ Addr MemController::translateToLocal(Addr addr)
         @test
         输出未转换的地址
     */
-    // cout << "rAddr is: " << rAddr << " addr is:" << addr << " start is: " << region_.start << " privateOffset" << privateMemOffset_ << endl;
+    // cout << "rAddr is: " << rAddr << " addr is:" << addr << " start is: " << region_.start << " privateOffset " << privateMemOffset_ << endl;
     if (region_.interleaveSize == 0)
     {
         rAddr = rAddr - region_.start + privateMemOffset_;

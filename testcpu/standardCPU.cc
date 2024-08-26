@@ -76,16 +76,18 @@ standardCPU::standardCPU(ComponentId_t id, Params &params) : Component(id), rng(
 
     /*获取文件地址*/
     string mem_data_path = params.find<string>("mem_data_path", "/home/haoranx98/Documents/addr.txt");
+    // cout << "mem_data_path is: " << mem_data_path << endl;
     ifstream file(mem_data_path);
 
     if (file.is_open())
     {
         string line;
+        cout << "file is open" << endl;
         while (std::getline(file, line))
         {
             lines.push_back(line);
         }
-
+        cout << "lines size is: " << lines.size() << endl;
         /*更改操作数*/
         ops = lines.size();
         // cout << "ops is: " << ops << endl;
@@ -231,18 +233,23 @@ bool standardCPU::clockTic(Cycle_t)
             if (reqsToSend > ops)
                 reqsToSend = ops;
 
+            // cout << "reqsToSend: " << reqsToSend << endl;
+
             for (int i = 0; i < reqsToSend; i++)
             {
 
                 /*原有地址获取*/
                 StandardMem::Addr addr = rng.generateNextUInt64();
                 /*新版地址获取*/
+                // cout << "lines size: " << lines.size() << endl;
+                // cout << "ops: " << ops << endl;
                 string line = lines[lines.size() - ops];
                 // cout << "ops: " << ops << endl;
-                string addr_str = line.substr(2, 6);
+                string addr_str = line.substr(0, 8);
                 // string addr_str = line.substr(0, 6);
                 // cout << "addr str: " << addr_str << endl;
-                Addr new_addr = stoi(addr_str, nullptr, 16);
+                // Addr new_addr = stoi(addr_str, nullptr, 16);
+                Addr new_addr = stol(addr_str, nullptr, 16);
                 // cout << "new addr: " << new_addr << endl;
 
                 string wr_flag = line.substr(8, 1);

@@ -21,7 +21,7 @@ OUTPUT_FOLDER_PATH = "/home/haoranx98/sst"
 cpu = sst.Component("core", "memHierarchy.standardCPU")
 cpu.addParams({
     "memFreq" : 1,
-    "memSize" : "16MiB",
+    "memSize" : "8GiB",
     "verbose" : 0,
     "clock" : "1GHz",
     "rngseed" : 6,
@@ -48,7 +48,7 @@ memctrl0.addParams({
     #"cpulink.debug" : 1,
     #"cpulink.debug_level" : 10,
     "addr_range_start": 0,
-    "addr_range_end": 8*1024*1024-1,
+    "addr_range_end": 4*1024*1024*1024-1,
     "controller_id" : 0,
     "controller_number_per_node" : CONTROLLER_NUMBER_PER_NODE,
     "isConfigured" : IS_RECONFIGURE,
@@ -57,7 +57,7 @@ memctrl0.addParams({
 
 memory0 = memctrl0.setSubComponent("backend", "memHierarchy.simpleMem")
 memory0.addParams({
-      "mem_size" : "8MiB",
+      "mem_size" : "4GiB",
       "access_time" : "100 ns",
 })
 
@@ -68,8 +68,8 @@ memctrl1.addParams({
     "clock" : "1GHz",
     #"cpulink.debug" : 1,
     #"cpulink.debug_level" : 10,
-    "addr_range_start": 8*1024*1024,
-    "addr_range_end": 16*1024*1024-1,
+    "addr_range_start": 4*1024*1024*1024,
+    "addr_range_end": 8*1024*1024*1024-1,
     "controller_id" : 1,
     "controller_number_per_node" : CONTROLLER_NUMBER_PER_NODE,
     "isConfigured" : IS_RECONFIGURE,
@@ -78,7 +78,7 @@ memctrl1.addParams({
 
 memory1 = memctrl1.setSubComponent("backend", "memHierarchy.simpleMem")
 memory1.addParams({
-      "mem_size" : "8MiB",
+      "mem_size" : "4GiB",
       "access_time" : "100 ns",
 })
 
