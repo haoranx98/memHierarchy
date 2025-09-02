@@ -12,10 +12,10 @@ DEBUG_CORE0 = 0
 DEBUG_CORE1 = 0
 
 IS_RECONFIGURE = True
-CONTROLLER_NUMBER_PER_NODE = 8
-MEM_SIZE = "8GiB"  
-BLOCK_NUM_PER_CONTROLLER = 16
-INPUT_FILE_PATH = "/home/zjlab/addr.txt"
+CONTROLLER_NUMBER_PER_NODE = 2
+MEM_SIZE = "2GiB"
+BLOCK_NUM_PER_CONTROLLER = 2
+INPUT_FILE_PATH = "/home/zjlab/scratch/src/sstelements-13.1.0/src/sst/elements/memHierarchy/tests/addr.txt"
 OUTPUT_FOLDER_PATH = "/home/zjlab/sst"
 
 

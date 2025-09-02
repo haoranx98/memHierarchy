@@ -14,7 +14,8 @@ DEBUG_CORE1 = 0
 IS_RECONFIGURE = True
 CONTROLLER_NUMBER_PER_NODE = 2
 BLOCK_NUM_PER_CONTROLLER = 2
-OUTPUT_FOLDER_PATH = "/home/haoranx98/sst"
+INPUT_FILE_PATH = "/home/zjlab/addr.txt"
+OUTPUT_FOLDER_PATH = "/home/zjlab/sst"
 
 #修改内存地址空间为1024KiB
 
@@ -31,7 +32,7 @@ cpu.addParams({
     "reqsPerIssue" : 3,
     "write_freq" : 40, # 36% writes
     "read_freq" : 60,  # 60% reads
-    "mem_data_path": "/home/haoranx98/addr.txt"
+    "mem_data_path": INPUT_FILE_PATH
 })
 iface = cpu.setSubComponent("memory", "memHierarchy.standardInterface")
 

@@ -12,11 +12,11 @@ DEBUG_CORE0 = 0
 DEBUG_CORE1 = 0
 
 IS_RECONFIGURE = True
-CONTROLLER_NUMBER_PER_NODE = 8
-MEM_SIZE = "8GiB"  
-BLOCK_NUM_PER_CONTROLLER = 16
-INPUT_FILE_PATH = "/home/zjlab/addr.txt"
-OUTPUT_FOLDER_PATH = "/home/zjlab/sst"
+CONTROLLER_NUMBER_PER_NODE = 4
+MEM_SIZE = "4GiB"
+BLOCK_NUM_PER_CONTROLLER = 8
+INPUT_FILE_PATH = "/home/zjlab/scratch/src/sstelements-13.1.0/src/sst/elements/memHierarchy/tests/addr_4_8.txt"
+OUTPUT_FOLDER_PATH = "/home/zjlab/Downloads"
 
 
 # Define the simulation components

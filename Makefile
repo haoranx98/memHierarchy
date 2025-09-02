@@ -93,22 +93,22 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-pc-linux-gnu
 host_triplet = x86_64-pc-linux-gnu
-am__append_1 = $(RAMULATOR_LDFLAGS)
-am__append_2 = $(RAMULATOR_LIB)
-am__append_3 = membackend/ramulatorBackend.cc \
-	membackend/ramulatorBackend.h
+#am__append_1 = $(RAMULATOR_LDFLAGS)
+#am__append_2 = $(RAMULATOR_LIB)
+#am__append_3 = membackend/ramulatorBackend.cc \
+#	membackend/ramulatorBackend.h
 
-am__append_4 = membackend/ramulatorBackend.h
-am__append_5 = $(RAMULATOR_CPPFLAGS) -DHAVE_LIBRAMULATOR
-am__append_6 = $(DRAMSIM_LDFLAGS)
-am__append_7 = $(DRAMSIM_LIB)
-am__append_8 = membackend/dramSimBackend.cc \
-	membackend/dramSimBackend.h \
-	membackend/pagedMultiBackend.cc \
-	membackend/pagedMultiBackend.h
-am__append_9 = membackend/dramSimBackend.h \
-	membackend/pagedMultiBackend.h
-am__append_10 = $(DRAMSIM_CPPFLAGS) -DHAVE_LIBDRAMSIM
+#am__append_4 = membackend/ramulatorBackend.h
+#am__append_5 = $(RAMULATOR_CPPFLAGS) -DHAVE_LIBRAMULATOR
+#am__append_6 = $(DRAMSIM_LDFLAGS)
+#am__append_7 = $(DRAMSIM_LIB)
+#am__append_8 = membackend/dramSimBackend.cc \
+#	membackend/dramSimBackend.h \
+#	membackend/pagedMultiBackend.cc \
+#	membackend/pagedMultiBackend.h
+#am__append_9 = membackend/dramSimBackend.h \
+#	membackend/pagedMultiBackend.h
+#am__append_10 = $(DRAMSIM_CPPFLAGS) -DHAVE_LIBDRAMSIM
 am__append_11 = $(DRAMSIM3_LDFLAGS)
 am__append_12 = $(DRAMSIM3_LIB)
 am__append_13 = membackend/dramSim3Backend.cc \
@@ -116,22 +116,22 @@ am__append_13 = membackend/dramSim3Backend.cc \
 
 am__append_14 = membackend/dramSim3Backend.h
 am__append_15 = $(DRAMSIM3_CPPFLAGS) -DHAVE_LIBDRAMSIM3
-am__append_16 = $(HBMDRAMSIM_LDFLAGS)
-am__append_17 = $(HBMDRAMSIM_LIB)
-am__append_18 = membackend/HBMdramSimBackend.cc \
-	membackend/HBMdramSimBackend.h \
-	membackend/HBMpagedMultiBackend.cc \
-	membackend/HBMpagedMultiBackend.h
-am__append_19 = membackend/HBMdramSimBackend.h \
-	membackend/HBMpagedMultiBackend.h
-am__append_20 = $(HBMDRAMSIM_CPPFLAGS) -DHAVE_LIBHBMDRAMSIM
-am__append_21 = $(HYBRIDSIM_LDFLAGS)
-am__append_22 = $(HYBRIDSIM_LIB)
-am__append_23 = membackend/hybridSimBackend.cc \
-	membackend/hybridSimBackend.h
+#am__append_16 = $(HBMDRAMSIM_LDFLAGS)
+#am__append_17 = $(HBMDRAMSIM_LIB)
+#am__append_18 = membackend/HBMdramSimBackend.cc \
+#	membackend/HBMdramSimBackend.h \
+#	membackend/HBMpagedMultiBackend.cc \
+#	membackend/HBMpagedMultiBackend.h
+#am__append_19 = membackend/HBMdramSimBackend.h \
+#	membackend/HBMpagedMultiBackend.h
+#am__append_20 = $(HBMDRAMSIM_CPPFLAGS) -DHAVE_LIBHBMDRAMSIM
+#am__append_21 = $(HYBRIDSIM_LDFLAGS)
+#am__append_22 = $(HYBRIDSIM_LIB)
+#am__append_23 = membackend/hybridSimBackend.cc \
+#	membackend/hybridSimBackend.h
 
-am__append_24 = membackend/hybridSimBackend.h
-am__append_25 = $(HYBRIDSIM_CPPFLAGS) -DHAVE_LIBHYBRIDSIM
+#am__append_24 = membackend/hybridSimBackend.h
+#am__append_25 = $(HYBRIDSIM_CPPFLAGS) -DHAVE_LIBHYBRIDSIM
 am__append_26 = $(LIBZ_LDFLAGS)
 am__append_27 = $(LIBZ_LIB)
 am__append_28 = $(LIBZ_CPPFLAGS)
@@ -232,11 +232,11 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(compdir)" "$(DESTDIR)$(sstdir)"
 LTLIBRARIES = $(comp_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
-am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
+#am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+#am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
 am__DEPENDENCIES_4 = $(am__DEPENDENCIES_1)
-am__DEPENDENCIES_5 = $(am__DEPENDENCIES_1)
-am__DEPENDENCIES_6 = $(am__DEPENDENCIES_1)
+#am__DEPENDENCIES_5 = $(am__DEPENDENCIES_1)
+#am__DEPENDENCIES_6 = $(am__DEPENDENCIES_1)
 am__DEPENDENCIES_7 = $(am__DEPENDENCIES_1)
 #am__DEPENDENCIES_8 = $(am__DEPENDENCIES_1)
 #am__DEPENDENCIES_9 = $(am__DEPENDENCIES_1)
@@ -318,13 +318,13 @@ am__libmemHierarchy_la_SOURCES_DIST = hash.h cacheListener.h \
 	membackend/goblinHMCBackend.cc membackend/goblinHMCBackend.h \
 	membackend/flashSimBackend.cc membackend/flashSimBackend.h
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = membackend/ramulatorBackend.lo
-am__objects_2 = membackend/dramSimBackend.lo \
-	membackend/pagedMultiBackend.lo
+#am__objects_1 = membackend/ramulatorBackend.lo
+#am__objects_2 = membackend/dramSimBackend.lo \
+#	membackend/pagedMultiBackend.lo
 am__objects_3 = membackend/dramSim3Backend.lo
-am__objects_4 = membackend/HBMdramSimBackend.lo \
-	membackend/HBMpagedMultiBackend.lo
-am__objects_5 = membackend/hybridSimBackend.lo
+#am__objects_4 = membackend/HBMdramSimBackend.lo \
+#	membackend/HBMpagedMultiBackend.lo
+#am__objects_5 = membackend/hybridSimBackend.lo
 #am__objects_6 =  \
 #	membackend/goblinHMCBackend.lo
 #am__objects_7 = membackend/flashSimBackend.lo
@@ -522,10 +522,10 @@ am__define_uniq_tagged_files = \
 am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/config/depcomp \
 	README
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} '/home/haoranx98/scratch/src/sstelements-13.1.0/sst-elements-library-13.1.0/config/missing' aclocal-1.16
+ACLOCAL = ${SHELL} '/home/zjlab/scratch/src/sstelements-13.1.0/config/missing' aclocal-1.16
 AMTAR = $${TAR-tar}
 AM_CFLAGS =  
-AM_CPPFLAGS =  -I/usr/include/python3.10 -I/usr/include/python3.10 -I/home/haoranx98/local/sstcore-13.1.0/include/sst/core -I/home/haoranx98/local/sstcore-13.1.0/include $(MPI_CPPFLAGS) -I$(top_srcdir)/src \
+AM_CPPFLAGS =  -I/usr/include/python3.10 -I/usr/include/python3.10 -I/home/zjlab/local/sstcore-13.1.0/include/sst/core -I/home/zjlab/local/sstcore-13.1.0/include $(MPI_CPPFLAGS) -I$(top_srcdir)/src \
 	$(am__append_5) $(am__append_10) $(am__append_15) \
 	$(am__append_20) $(am__append_25) $(am__append_28) \
 	$(am__append_33) $(am__append_37) $(HMC_FLAG)
@@ -533,10 +533,10 @@ AM_CXXFLAGS =  -std=c++17
 AM_DEFAULT_VERBOSITY = 0
 AM_LDFLAGS =  -L/usr/lib/python3.10/config-3.10-x86_64-linux-gnu -L/usr/lib/x86_64-linux-gnu -lpython3.10 -lcrypt -ldl  -lm -lm 
 AR = ar
-AUTOCONF = ${SHELL} '/home/haoranx98/scratch/src/sstelements-13.1.0/sst-elements-library-13.1.0/config/missing' autoconf
-AUTOHEADER = ${SHELL} '/home/haoranx98/scratch/src/sstelements-13.1.0/sst-elements-library-13.1.0/config/missing' autoheader
-AUTOMAKE = ${SHELL} '/home/haoranx98/scratch/src/sstelements-13.1.0/sst-elements-library-13.1.0/config/missing' automake-1.16
-AWK = gawk
+AUTOCONF = ${SHELL} '/home/zjlab/scratch/src/sstelements-13.1.0/config/missing' autoconf
+AUTOHEADER = ${SHELL} '/home/zjlab/scratch/src/sstelements-13.1.0/config/missing' autoheader
+AUTOMAKE = ${SHELL} '/home/zjlab/scratch/src/sstelements-13.1.0/config/missing' automake-1.16
+AWK = mawk
 CC = gcc
 CCAS = gcc
 CCASDEPMODE = depmode=gcc3
@@ -560,14 +560,14 @@ CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
 DLLTOOL = false
-DRAMSIM3_CPPFLAGS = -I/home/haoranx98/local/packages/dramsim3/src -DHAVE_DRAMSIM3
-DRAMSIM3_LDFLAGS = -L/home/haoranx98/local/packages/dramsim3
+DRAMSIM3_CPPFLAGS = -I/home/zjlab/local/packages/dramsim3/src -DHAVE_DRAMSIM3
+DRAMSIM3_LDFLAGS = -L/home/zjlab/local/packages/dramsim3
 DRAMSIM3_LIB = -ldramsim3
-DRAMSIM3_LIBDIR = /home/haoranx98/local/packages/dramsim3
-DRAMSIM_CPPFLAGS = -I/home/haoranx98/local/packages/DRAMSim2 -DHAVE_DRAMSIM
-DRAMSIM_LDFLAGS = -L/home/haoranx98/local/packages/DRAMSim2
-DRAMSIM_LIB = -ldramsim
-DRAMSIM_LIBDIR = /home/haoranx98/local/packages/DRAMSim2
+DRAMSIM3_LIBDIR = /home/zjlab/local/packages/dramsim3
+DRAMSIM_CPPFLAGS = 
+DRAMSIM_LDFLAGS = 
+DRAMSIM_LIB = 
+DRAMSIM_LIBDIR = 
 DSYMUTIL = 
 DUMPBIN = 
 DUMPI_CPPFLAGS = 
@@ -576,7 +576,7 @@ DUMPI_LIB =
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 
-EGREP = /bin/grep -E
+EGREP = /usr/bin/grep -E
 ETAGS = etags
 EXEEXT = 
 FDSIM_CPPFLAGS = 
@@ -584,7 +584,7 @@ FDSIM_CXXFLAGS =
 FDSIM_LDFLAGS = 
 FDSIM_LIB = 
 FDSIM_LIBDIR = 
-FGREP = /bin/grep -F
+FGREP = /usr/bin/grep -F
 GOBLIN_HMCSIM_CPPFLAGS = 
 GOBLIN_HMCSIM_LDFLAGS = 
 GOBLIN_HMCSIM_LIB = 
@@ -593,23 +593,23 @@ GPGPUSIM_CPPFLAGS =
 GPGPUSIM_LDFLAGS = 
 GPGPUSIM_LIB = 
 GPGPUSIM_LIBDIR = 
-GREP = /bin/grep
+GREP = /usr/bin/grep
 HAVE_SET_PTRACER = 1
-HBMDRAMSIM_CPPFLAGS = -I/home/haoranx98/local/packages/HBMDramsim2 -DHAVE_HBMDRAMSIM
-HBMDRAMSIM_LDFLAGS = -L/home/haoranx98/local/packages/HBMDramsim2
-HBMDRAMSIM_LIB = -lhbmdramsim
-HBMDRAMSIM_LIBDIR = /home/haoranx98/local/packages/HBMDramsim2
-HYBRIDSIM_CPPFLAGS = -I/home/haoranx98/local/packages/HybridSim
-HYBRIDSIM_LDFLAGS = -L/home/haoranx98/local/packages/HybridSim
-HYBRIDSIM_LIB = -lhybridsim
-HYBRIDSIM_LIBDIR = /home/haoranx98/local/packages/HybridSim
+HBMDRAMSIM_CPPFLAGS = 
+HBMDRAMSIM_LDFLAGS = 
+HBMDRAMSIM_LIB = 
+HBMDRAMSIM_LIBDIR = 
+HYBRIDSIM_CPPFLAGS = 
+HYBRIDSIM_LDFLAGS = 
+HYBRIDSIM_LIB = 
+HYBRIDSIM_LIBDIR = 
 INCLTDL = 
-INSTALL = /bin/install -c
+INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LD = /bin/ld -m elf_x86_64
+LD = /usr/bin/ld -m elf_x86_64
 LDFLAGS = 
 LIBADD_DL =  
 LIBADD_DLD_LINK = 
@@ -633,16 +633,16 @@ LT_CONFIG_H = src/sst_element_config.h
 LT_DLLOADERS =  dlopen.la
 LT_DLPREOPEN = -dlpreopen dlopen.la 
 LT_SYS_LIBRARY_PATH = 
-MAKEINFO = ${SHELL} '/home/haoranx98/scratch/src/sstelements-13.1.0/sst-elements-library-13.1.0/config/missing' makeinfo
+MAKEINFO = ${SHELL} '/home/zjlab/scratch/src/sstelements-13.1.0/config/missing' makeinfo
 MANIFEST_TOOL = :
-MKDIR_P = /bin/mkdir -p
-NM = /bin/nm -B
+MKDIR_P = /usr/bin/mkdir -p
+NM = /usr/bin/nm -B
 NMEDIT = 
-NVDIMMSIM_CPPFLAGS = -I/home/haoranx98/local/packages/NVDIMMSim -I/home/haoranx98/local/packages/NVDIMMSim/include
-NVDIMMSIM_CXXFLAGS =  -std=c++17 -g -O2
-NVDIMMSIM_LDFLAGS = -L/home/haoranx98/local/packages/NVDIMMSim -L/home/haoranx98/local/packages/NVDIMMSim/lib
-NVDIMMSIM_LIB = -lnvdsim
-NVDIMMSIM_LIBDIR = /home/haoranx98/local/packages/NVDIMMSim
+NVDIMMSIM_CPPFLAGS = 
+NVDIMMSIM_CXXFLAGS = 
+NVDIMMSIM_LDFLAGS = 
+NVDIMMSIM_LIB = 
+NVDIMMSIM_LIBDIR = 
 OBJDUMP = objdump
 OBJEXT = o
 OTF2_CONFIG_TOOL = 
@@ -664,18 +664,18 @@ PACKAGE_URL =
 PACKAGE_VERSION = 13.1.0
 PATH_SEPARATOR = :
 PINTOOL2_RUNTIME = 
-PINTOOL3_RUNTIME = /home/haoranx98/local/packages/pin-3.26-98690-g1fc9d60e6-gcc-linux/pin
-PINTOOL_CPPFLAGS = -I/home/haoranx98/local/packages/pin-3.26-98690-g1fc9d60e6-gcc-linux/source/include -DHAVE_PIN=1 -DPINTOOL_EXECUTABLE=\"/home/haoranx98/local/packages/pin-3.26-98690-g1fc9d60e6-gcc-linux/pin\"
-PINTOOL_DIR = /home/haoranx98/local/packages/pin-3.26-98690-g1fc9d60e6-gcc-linux
-PINTOOL_LDFLAGS = -L/home/haoranx98/local/packages/pin-3.26-98690-g1fc9d60e6-gcc-linux/intel64/runtime -L/home/haoranx98/local/packages/pin-3.26-98690-g1fc9d60e6-gcc-linux/intel64/lib -L/home/haoranx98/local/packages/pin-3.26-98690-g1fc9d60e6-gcc-linux/intel/lib-ext
-PINTOOL_PATH = /home/haoranx98/local/packages/pin-3.26-98690-g1fc9d60e6-gcc-linux:/home/haoranx98/.local/bin:/opt/riscv/bin:/home/haoranx98/anaconda3/condabin:/home/haoranx98/.nvm/versions/node/v20.10.0/bin:/home/haoranx98/local/sstelements-13.1.0/bin:/home/haoranx98/local/sstcore-13.1.0/bin:/usr/lib/ccache:/bin:/usr/local/openmpi/bin:/home/haoranx98/.cargo/bin:/home/haoranx98/.local/bin:/usr/lib/ccache:/bin:/usr/local/openmpi/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/haoranx98/.local/share/JetBrains/Toolbox/scripts:/home/haoranx98/.local/share/coursier/bin:/opt/mentor/modelsim2020.4/modeltech/bin/:/home/haoranx98/.local/share/JetBrains/Toolbox/scripts:/home/haoranx98/.local/share/coursier/bin
-PINTOOL_RUNTIME = /home/haoranx98/local/packages/pin-3.26-98690-g1fc9d60e6-gcc-linux/pin
-RAMULATOR_CPPFLAGS = -I/home/haoranx98/local/packages/ramulator/src -DRAMULATOR -DHAVE_RAMULATOR
-RAMULATOR_LDFLAGS = -L/home/haoranx98/local/packages/ramulator
-RAMULATOR_LIB = -lramulator
-RAMULATOR_LIBDIR = /home/haoranx98/local/packages/ramulator
+PINTOOL3_RUNTIME = 
+PINTOOL_CPPFLAGS = 
+PINTOOL_DIR = 
+PINTOOL_LDFLAGS = 
+PINTOOL_PATH = /home/zjlab/local/sstelements-13.1.0/bin:/home/zjlab/local/sstcore-13.1.0/bin:/home/zjlab/local/sstelements-14.1.0/bin:/home/zjlab/local/sstcore-14.1.0/bin:/home/zjlab/local/packages/OpenMPI-4.1.6/bin:/home/zjlab/anaconda3/condabin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PINTOOL_RUNTIME = 
+RAMULATOR_CPPFLAGS = 
+RAMULATOR_LDFLAGS = 
+RAMULATOR_LIB = 
+RAMULATOR_LIBDIR = 
 RANLIB = ranlib
-SED = /bin/sed
+SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/bash
 SHM_LIB =  
@@ -683,20 +683,20 @@ SSTELEMENTS_GIT_BRANCH = N/A
 SSTELEMENTS_GIT_COMMITCOUNT = 0
 SSTELEMENTS_GIT_HEADSHA = 13.1.0
 SST_ACTIVE_ELEMENT_LIBRARIES =  ariel cacheTracer cassini cramSim ember firefly hermes kingsley memHierarchy mercury merlin messier miranda mmu osseous prospero rdmaNic samba shogun simpleElementExample thornhill vanadis vaultsim zodiac
-SST_CONFIG_TOOL = /home/haoranx98/local/sstcore-13.1.0/bin/sst-config
+SST_CONFIG_TOOL = /home/zjlab/local/sstcore-13.1.0/bin/sst-config
 SST_DIST_ELEMENT_LIBRARIES =  ariel balar cacheTracer cassini cramSim ember firefly hermes kingsley memHierarchy mercury merlin messier miranda mmu osseous prospero rdmaNic samba shogun simpleElementExample thornhill vanadis vaultsim zodiac
-SST_PREFIX = /home/haoranx98/local/sstcore-13.1.0
-SST_REGISTER_TOOL = /home/haoranx98/local/sstcore-13.1.0/bin/sst-register
+SST_PREFIX = /home/zjlab/local/sstcore-13.1.0
+SST_REGISTER_TOOL = /home/zjlab/local/sstcore-13.1.0/bin/sst-register
 STAKE_CPPFLAGS = 
 STAKE_LDFLAGS = 
 STAKE_LIB = 
 STAKE_LIBDIR = 
 STRIP = strip
 VERSION = 13.1.0
-abs_builddir = /home/haoranx98/scratch/src/sstelements-13.1.0/sst-elements-library-13.1.0/src/sst/elements/memHierarchy
-abs_srcdir = /home/haoranx98/scratch/src/sstelements-13.1.0/sst-elements-library-13.1.0/src/sst/elements/memHierarchy
-abs_top_builddir = /home/haoranx98/scratch/src/sstelements-13.1.0/sst-elements-library-13.1.0
-abs_top_srcdir = /home/haoranx98/scratch/src/sstelements-13.1.0/sst-elements-library-13.1.0
+abs_builddir = /home/zjlab/scratch/src/sstelements-13.1.0/src/sst/elements/memHierarchy
+abs_srcdir = /home/zjlab/scratch/src/sstelements-13.1.0/src/sst/elements/memHierarchy
+abs_top_builddir = /home/zjlab/scratch/src/sstelements-13.1.0
+abs_top_srcdir = /home/zjlab/scratch/src/sstelements-13.1.0
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -726,7 +726,7 @@ host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/haoranx98/scratch/src/sstelements-13.1.0/sst-elements-library-13.1.0/config/install-sh
+install_sh = ${SHELL} /home/zjlab/scratch/src/sstelements-13.1.0/config/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -737,7 +737,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /home/haoranx98/local/sstelements-13.1.0
+prefix = /home/zjlab/local/sstelements-13.1.0
 program_transform_name = s,x,x,
 psdir = ${docdir}
 runstatedir = ${localstatedir}/run

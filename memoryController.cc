@@ -121,6 +121,7 @@ MemController::MemController(ComponentId_t id, Params &params) : Component(id), 
     this->controller_number_per_node = params.find<int>("controller_number_per_node", 1);
     this->block_num_per_controller = params.find<int>("block_num_per_controller", 2);
     this->folder_path = params.find<string>("output_folder_path", "/home/haoranx98");
+    std::cout << "output_folder_path: " << this->folder_path << endl;
 
     std::cout << "folder_path: " << this->folder_path << endl;
 
@@ -693,7 +694,7 @@ void MemController::handleEvent(SST::Event *event)
                 blnum[1][real_block_num]++;
 
                 // const char* env_var = std::getenv("HOME");
-                std::string filename = folder_path + "/reconfigure.txt";
+                std::string filename = folder_path + "/reconfigure_" + std::to_string(controller_number_per_node) + "_" + std::to_string(block_num_per_controller) + ".txt";
                 std::ofstream file;
 
                 // file.open(filename, std::ios::out | std::ios::app);
