@@ -15,7 +15,8 @@ IS_RECONFIGURE = False
 CONTROLLER_NUMBER_PER_NODE = 1
 MEM_SIZE = "2GiB"
 BLOCK_NUM_PER_CONTROLLER = 1
-INPUT_FILE_PATH = "/home/zjlab/addr_8.txt"
+INPUT_0_FILE_PATH = "/home/zjlab/addr_8_0.txt"
+INPUT_1_FILE_PATH = "/home/zjlab/addr_8_1.txt"
 OUTPUT_FOLDER_PATH = "/home/zjlab/share_mem"
 
 
@@ -34,7 +35,7 @@ cpu0.addParams({
     "reqsPerIssue" : 3,
     "write_freq" : 40, # 36% writes
     "read_freq" : 60,  # 60% reads
-    "mem_data_path": INPUT_FILE_PATH
+    "mem_data_path": INPUT_0_FILE_PATH
 })
 iface0 = cpu0.setSubComponent("memory", "memHierarchy.standardInterface")
 
@@ -51,7 +52,7 @@ cpu1.addParams({
     "reqsPerIssue" : 3,
     "write_freq" : 40, # 36% writes
     "read_freq" : 60,  # 60% reads
-    "mem_data_path": INPUT_FILE_PATH
+    "mem_data_path": INPUT_1_FILE_PATH
 })
 iface1 = cpu1.setSubComponent("memory", "memHierarchy.standardInterface")
 

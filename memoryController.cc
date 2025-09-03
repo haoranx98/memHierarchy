@@ -588,12 +588,13 @@ void MemController::handleEvent(SST::Event *event)
                 string dst = ev->getDst();
 
                 // 访存请求的数量
-                // std::cout << "This is   " << this->count << endl;
+                std::cout << "This is   " << this->count << endl;
 
-                // cout << "local Addr is " << ev->getAddr() << endl;
+                std::cout << "local Addr is " << ev->getAddr() << endl;
 
                 // 内存请求的发送端和接收端
                 // std::cout << "memoryController src " << src << " memoryController dst " << dst << endl;
+                // uint64_t addr = ev->getAddr();
 
                 MemController::count++;
 
@@ -619,7 +620,7 @@ void MemController::handleEvent(SST::Event *event)
                         {
                             int value;
                             if (i % 2 == 1)
-                            {                                        // 奇数行
+                            {                                                                                             // 奇数行
                                 value = old_block[i * controller_number_per_node + (controller_number_per_node - 1 - j)]; // 倒置奇数行
                             }
                             else
@@ -775,6 +776,23 @@ void MemController::handleEvent(SST::Event *event)
         Addr addr = ev->getAddr();
         // cout << "addr is: " << addr << endl;
 
+        string src = ev->getSrc();
+        string dst = ev->getDst();
+        string cpu_src = src.substr(0, src.find_first_of(":"));
+        // std::cout << "memoryController src " << src << " true src: " << cpu_src <<  " memoryController dst " << dst << endl;
+
+        bool isRead = (ev->getCmd() == Command::GetS ||
+                       ev->getCmd() == Command::GetX ||
+                       ev->getCmd() == Command::GetSX);
+
+        bool isWrite = (ev->getCmd() == Command::PutM ||
+                        ev->getCmd() == Command::PutE ||
+                        ev->getCmd() == Command::PutS ||
+                        ev->getCmd() == Command::Write);
+
+        // std::cout << "is read: " << isRead << " is write: " << isWrite << endl;
+        // std::cout << "Addr is: " << ev->getAddr() << endl;
+
         int block_num = block_num_per_controller * controller_id;
 
         block_num += addr / block_size;
@@ -797,6 +815,33 @@ void MemController::handleEvent(SST::Event *event)
         // cout << endl;
         file << endl;
         file.close();
+
+        std::string trace_file_path = folder_path + "/trace.txt";
+        static bool first_write = true;
+
+        std::ofstream trace_file;
+        if (first_write)
+        {
+            trace_file.open(trace_file_path, std::ios::out); // 覆盖
+            first_write = false;
+        }
+        else
+        {
+            trace_file.open(trace_file_path, std::ios::out | std::ios::app); // 追加
+        }
+
+        string str;
+        if (isRead)
+            str = "read";
+        else if (isWrite)
+            str = "write";
+        else
+            str = "other";
+
+        trace_file << "src: " << cpu_src << " is " << str << " addr at " << std::hex << ev->getAddr() << endl;
+        // std::cout << "src: " << cpu_src << " is: " << str << " addr: " << std::hex << ev->getAddr() << endl;
+
+        trace_file.close();
 
         notifyListeners(ev);
 
