@@ -75,6 +75,7 @@ memctrl.addParams({
     "controller_number_per_node": CONTROLLER_NUMBER_PER_NODE,
     "block_num_per_controller" : BLOCK_NUM_PER_CONTROLLER,
     "isConfigured": IS_RECONFIGURE,
+    "isShared": False,
     "output_folder_path": OUTPUT_FOLDER_PATH
 })
 

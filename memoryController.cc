@@ -58,12 +58,14 @@ using namespace SST::MemHierarchy;
 int32_t MemController::count = 0;
 bool is_mapped = false;
 int MemController::blnum[2][256] = {0};
+bool MemController::first_write = true;
 
 MemController::MemController(ComponentId_t id, Params &params) : Component(id), backing_(NULL)
 {
 
     // m_core_num = params.find<>("core_num", 1); //获取core_num
     m_isReconfigured = params.find<bool>("isConfigured", false);
+    m_isShared = params.find<bool>("isShared", false);
     // //测试读取是否正确
     // std::cout << "core_num: " << m_core_num << std::endl;
     std::cout << "is_Reconfigured: " << this->m_isReconfigured << std::endl;
@@ -119,8 +121,10 @@ MemController::MemController(ComponentId_t id, Params &params) : Component(id), 
     // 新增参数
     this->controller_id = params.find<int>("controller_id", 0);
     this->controller_number_per_node = params.find<int>("controller_number_per_node", 1);
-    this->block_num_per_controller = params.find<int>("block_num_per_controller", 2);
+    this->block_num_per_controller = params.find<int>("block_num_per_controller", 1);
     this->folder_path = params.find<string>("output_folder_path", "/home/haoranx98");
+    this->trace_output_path = this->folder_path + "/trace.txt";
+    std::cout << "trace_output_trace: " << trace_output_path << endl;
     std::cout << "output_folder_path: " << this->folder_path << endl;
 
     std::cout << "folder_path: " << this->folder_path << endl;
@@ -438,6 +442,7 @@ void MemController::handleEvent(SST::Event *event)
     }
 
     MemEvent *ev = static_cast<MemEvent *>(meb);
+
     /*
         @haoranx98
         * test
@@ -816,32 +821,40 @@ void MemController::handleEvent(SST::Event *event)
         file << endl;
         file.close();
 
-        std::string trace_file_path = folder_path + "/trace.txt";
-        static bool first_write = true;
-
-        std::ofstream trace_file;
-        if (first_write)
+        if (m_isShared)
         {
-            trace_file.open(trace_file_path, std::ios::out); // 覆盖
-            first_write = false;
+            if (isWrite)
+            {
+                SST::MemHierarchy::MemEventBase::dataVec payload = ev->getPayload();
+                std::ofstream trace_file;
+                if (first_write)
+                {
+                    trace_file.open(trace_output_path, std::ios::out); // 覆盖
+                    first_write = false;
+                }
+                else
+                {
+                    trace_file.open(trace_output_path, std::ios::out | std::ios::app); // 追加
+                }
+
+                string str = "write";
+
+                trace_file << "src: " << cpu_src << " is " << str << " addr at " << std::hex << ev->getAddr();
+
+                trace_file << " data: ";
+
+                for (size_t i = 0; i < payload.size(); i++)
+                {
+
+                    trace_file << std::hex << (int)payload[i] << " ";
+                }
+
+                trace_file << endl;
+                // std::cout << "src: " << cpu_src << " is: " << str << " addr: " << std::hex << ev->getAddr() << endl;
+
+                trace_file.close();
+            }
         }
-        else
-        {
-            trace_file.open(trace_file_path, std::ios::out | std::ios::app); // 追加
-        }
-
-        string str;
-        if (isRead)
-            str = "read";
-        else if (isWrite)
-            str = "write";
-        else
-            str = "other";
-
-        trace_file << "src: " << cpu_src << " is " << str << " addr at " << std::hex << ev->getAddr() << endl;
-        // std::cout << "src: " << cpu_src << " is: " << str << " addr: " << std::hex << ev->getAddr() << endl;
-
-        trace_file.close();
 
         notifyListeners(ev);
 
@@ -1105,6 +1118,29 @@ void MemController::readData(MemEvent *event)
     }
 
     event->setPayload(payload);
+
+    if(this->m_isShared){
+
+        std::ofstream trace_file;
+        if (first_write) {
+            trace_file.open(trace_output_path, std::ios::out);  // 覆盖
+            first_write = false;
+        } else {
+            trace_file.open(trace_output_path, std::ios::out | std::ios::app);  // 追加
+        }
+
+        trace_file << "Resp src: " << event->getRqstr()
+                   << " is read addr at " << std::hex << event->getAddr()
+                   << " data: ";
+
+        for (auto b : payload) {
+            trace_file << std::hex << static_cast<int>(b) << " ";
+        }
+        trace_file << std::endl;
+
+    }
+
+    
 }
 
 /* Backing store interactions for custom command subcomponents */

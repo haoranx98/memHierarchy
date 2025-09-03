@@ -62,6 +62,7 @@ public:
             {"controller_number_per_node", "(uint) Number of controllers per node", "1"},\
             {"block_num_per_controller", "(uint) Number of blocks per controller", "1"},\
             {"isConfigured", "(bool) Enable reConfigure", "False"},\
+            {"isShared", "(bool) Enable shared memory space", "False"},\
             {"output_folder_path", "(string) Path to the output folder for the controller", "/home/haoranx98"}
 
     SST_ELI_DOCUMENT_PARAMS( MEMCONTROLLER_ELI_PARAMS )
@@ -182,11 +183,14 @@ protected:
     std::vector<string> core_name;
     static int32_t count;
     bool m_isReconfigured;
+    bool m_isShared;
     static int blnum[2][256];
     static bool is_mapped;
+    static bool first_write;
     
 
     string folder_path;
+    string trace_output_path;
 
     // void inc_count(){
     //     this->count++;
@@ -202,6 +206,14 @@ protected:
 
     bool get_is_reconfigured(){
         return this->m_isReconfigured;
+    };
+
+    void set_is_shared(bool is_shared){
+        this->m_isShared = is_shared;
+    };
+
+    bool get_is_shared(){
+        return this->m_isShared;
     };
 
     void set_core_num(int32_t core_num){
